@@ -55,19 +55,22 @@ class JavascriptDocPopulator
 
           doc.css('dt a').each do |a2|
             name2 = a2.css('code').text()
-            output_path2 = "#{DOWNLOAD_DIR}/#{name}/#{name2}.html"
 
-            if !File.exist?(output_path2)
-              begin
-                uri2 = URI.parse(BASE_URL + a2['href'])
-                response2 = Net::HTTP.get_response(uri2)
-                File.write(output_path2, response2.body)
-                puts "Done downloading page for 2nd-level item  #{name2}, sleeping ..."
-              rescue => ex
-                puts "Failed to download page for 2nd-level item #{name2}"
-                puts ex.backtrace
+            if name2.start_with?("#{name}.")
+              output_path2 = "#{DOWNLOAD_DIR}/#{name}/#{name2}.html"
+
+              if !File.exist?(output_path2)
+                begin
+                  uri2 = URI.parse(BASE_URL + a2['href'])
+                  response2 = Net::HTTP.get_response(uri2)
+                  File.write(output_path2, response2.body)
+                  puts "Done downloading page for 2nd-level item  #{name2}, sleeping ..."
+                rescue => ex
+                  puts "Failed to download page for 2nd-level item #{name2}"
+                  puts ex.backtrace
+                end
+                sleep(1)
               end
-              sleep(1)
             end
           end
         end
