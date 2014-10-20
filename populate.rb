@@ -141,16 +141,25 @@ class JavascriptDocPopulator
           "type" : "boolean",
           "index" : "no"
         },
+        "recognitionKeys" : {
+          "type" : "string",
+          "index" : "not_analyzed"
+        },
         "constructor" : {
           "type" : "object",
           "properties" : {
-            "name" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "descriptionHtml" : {
-              "type" : "string",
-              "index" : "no"
+            "params" : {
+              "type" : "object",
+              "properties" : {
+                "name" : {
+                  "type" : "string",
+                  "index" : "no"
+                },
+                "descriptionHtml" : {
+                  "type" : "string",
+                  "index" : "no"
+                }
+              }
             }
           }
         },
@@ -191,6 +200,18 @@ class JavascriptDocPopulator
               "index" : "no"
             },
             "summaryHtml" : {
+              "type" : "string",
+              "index" : "no"
+            },
+            "syntax" : {
+              "type" : "string",
+              "index" : "no"
+            },
+            "parametersHtml" : {
+              "type" : "string",
+              "index" : "no"
+            },
+            "returnValueDescriptionHtml" : {
               "type" : "string",
               "index" : "no"
             },
@@ -252,6 +273,18 @@ class JavascriptDocPopulator
               "type" : "string",
               "index" : "no"
             },
+            "syntax" : {
+              "type" : "string",
+              "index" : "no"
+            },
+            "parametersHtml" : {
+              "type" : "string",
+              "index" : "no"
+            },
+            "returnValueDescriptionHtml" : {
+              "type" : "string",
+              "index" : "no"
+            },
             "url" : {
               "type" : "string",
               "index" : "no"
@@ -269,6 +302,10 @@ class JavascriptDocPopulator
               "index" : "no"
             }
           }
+        },
+        "parametersHtml" : {
+          "type" : "string",
+          "index" : "no"
         },
         "returnValueDescriptionHtml" : {
           "type" : "string",
