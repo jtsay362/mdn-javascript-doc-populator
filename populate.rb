@@ -89,6 +89,24 @@ class JavascriptDocPopulator
       out.write <<-eos
 {
   "metadata" : {
+    "settings" : {
+      "analysis": {
+        "char_filter" : {
+          "no_special" : {
+            "type" : "mapping",
+            "mappings" : [".=>", "_=>", "(=>", ")=>"]
+          }
+        },
+        "analyzer" : {
+          "lower_whitespace" : {
+            "type" : "custom",
+            "tokenizer": "whitespace",
+            "filter" : ["lowercase"],
+            "char_filter" : ["no_special"]
+          }
+        }
+      }
+    },
     "mapping" : {
       "_all" : {
         "enabled" : false
@@ -96,18 +114,15 @@ class JavascriptDocPopulator
       "properties" : {
         "qualifiedName" : {
           "type" : "string",
-          "index" : "analyzed",
-          "analyzer" : "simple"
+          "analyzer" : "lower_whitespace"
         },
         "simpleName" : {
           "type" : "string",
-          "index" : "analyzed",
-          "analyzer" : "simple"
+          "analyzer" : "lower_whitespace"
         },
         "class" : {
           "type" : "string",
-          "index" : "analyzed",
-          "analyzer" : "simple"
+          "analyzer" : "lower_whitespace"
         },
         "syntax" : {
           "type" : "string",
@@ -147,161 +162,23 @@ class JavascriptDocPopulator
         },
         "constructor" : {
           "type" : "object",
-          "properties" : {
-            "params" : {
-              "type" : "object",
-              "properties" : {
-                "name" : {
-                  "type" : "string",
-                  "index" : "no"
-                },
-                "descriptionHtml" : {
-                  "type" : "string",
-                  "index" : "no"
-                }
-              }
-            }
-          }
+          "enabled" : false
         },
         "classProps" : {
           "type" : "object",
-          "properties" : {
-            "simpleName" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "summaryHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "url" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "deprecated" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "ecma6" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "nonStandard" : {
-              "type" : "boolean",
-              "index" : "no"
-            }
-          }
+          "enabled" : false
         },
         "classMethods" : {
           "type" : "object",
-          "properties" : {
-            "simpleName" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "summaryHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "syntax" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "parametersHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "returnValueDescriptionHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "url" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "deprecated" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "ecma6" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "nonStandard" : {
-              "type" : "boolean",
-              "index" : "no"
-            }
-          }
+          "enabled" : false
         },
         "props" : {
           "type" : "object",
-          "properties" : {
-            "simpleName" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "summaryHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "url" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "deprecated" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "ecma6" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "nonStandard" : {
-              "type" : "boolean",
-              "index" : "no"
-            }
-          }
+          "enabled" : false
         },
         "methods" : {
           "type" : "object",
-          "properties" : {
-            "simpleName" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "summaryHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "syntax" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "parametersHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "returnValueDescriptionHtml" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "url" : {
-              "type" : "string",
-              "index" : "no"
-            },
-            "deprecated" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "ecma6" : {
-              "type" : "boolean",
-              "index" : "no"
-            },
-            "nonStandard" : {
-              "type" : "boolean",
-              "index" : "no"
-            }
-          }
+          "enabled" : false
         },
         "parametersHtml" : {
           "type" : "string",
@@ -314,6 +191,10 @@ class JavascriptDocPopulator
         "errorsThrownHtml" : {
           "type" : "string",
           "index" : "no"
+        },
+        "suggest" : {
+          "type" : "completion",
+          "analyzer" : "lower_whitespace"
         }
       }
     }
@@ -616,7 +497,11 @@ class JavascriptDocPopulator
       ecma6: ecma6,
       deprecated: false,
       nonStandard: false,
-      recognitionKeys: [recognition_key_for_kind(KIND_CLASS)]
+      recognitionKeys: [recognition_key_for_kind(KIND_CLASS)],
+      suggest: {
+        input: [class_name],
+        output: class_name
+      }
     }
 
     if !constructor_params.nil?
@@ -722,7 +607,11 @@ class JavascriptDocPopulator
       deprecated: deprecated,
       kind: kind,
       url: url,
-      recognitionKeys: [recognition_key_for_kind(kind)]
+      recognitionKeys: [recognition_key_for_kind(kind)],
+      suggest: {
+        input: [simple_name, qualified_name].uniq,
+        output: qualified_name
+      }
     }
 
     if is_invokable_kind?(kind)
