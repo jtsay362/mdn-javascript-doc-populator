@@ -94,13 +94,13 @@ class JavascriptDocPopulator
         "char_filter" : {
           "no_special" : {
             "type" : "mapping",
-            "mappings" : [".=>", "_=>", "(=>", ")=>"]
+            "mappings" : [".=>", "_=>", "(=>", ")=>", "\\\\u0020=>"]
           }
         },
         "analyzer" : {
-          "lower_whitespace" : {
+          "lower_keyword" : {
             "type" : "custom",
-            "tokenizer": "whitespace",
+            "tokenizer": "keyword",
             "filter" : ["lowercase"],
             "char_filter" : ["no_special"]
           }
@@ -114,15 +114,15 @@ class JavascriptDocPopulator
       "properties" : {
         "qualifiedName" : {
           "type" : "string",
-          "analyzer" : "lower_whitespace"
+          "analyzer" : "lower_keyword"
         },
         "simpleName" : {
           "type" : "string",
-          "analyzer" : "lower_whitespace"
+          "analyzer" : "lower_keyword"
         },
         "class" : {
           "type" : "string",
-          "analyzer" : "lower_whitespace"
+          "analyzer" : "lower_keyword"
         },
         "syntax" : {
           "type" : "string",
@@ -194,7 +194,7 @@ class JavascriptDocPopulator
         },
         "suggest" : {
           "type" : "completion",
-          "analyzer" : "lower_whitespace"
+          "analyzer" : "lower_keyword"
         }
       }
     }
